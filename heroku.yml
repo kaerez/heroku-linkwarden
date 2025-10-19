@@ -1,0 +1,24 @@
+# This file tells Heroku how to build and run the Linkwarden application.
+# It uses the container stack to build the Dockerfile.
+
+# Build phase: Specifies how to build the application.
+build:
+  docker:
+    # 'web' is the process type. This points to the Dockerfile in the root.
+    web: Dockerfile
+
+# Release phase: This command runs once after a successful build but before
+# the new version is deployed. It's used for tasks like database migrations.
+release:
+  # Runs the Prisma command to apply any pending database schema changes.
+  command:
+    - yarn prisma:deploy
+  # Specifies that the release command should run on the same image
+  # that was just built for the 'web' process.
+  image: web
+
+# Run phase: Defines the command to start the application.
+run:
+  # This command starts the Linkwarden server.
+  # Heroku automatically provides the $PORT environment variable.
+  web: yarn start
